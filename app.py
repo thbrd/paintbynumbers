@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify, send_file
 import os
 import uuid
 from paint_by_numbers import generate_paint_by_numbers
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 UPLOAD_FOLDER = 'uploads'
 RESULT_FOLDER = 'results'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
