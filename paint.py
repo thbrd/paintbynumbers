@@ -1,1 +1,0 @@
-# originele paint.py inhoud
