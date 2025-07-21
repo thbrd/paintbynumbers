@@ -2,7 +2,7 @@ from flask import Flask, request, send_file
 from flask_cors import CORS
 import os
 import uuid
-import main  # originele pipeline wrapper
+import main
 
 app = Flask(__name__)
 CORS(app)
