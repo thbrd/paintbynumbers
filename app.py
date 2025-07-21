@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, send_file
+from flask_cors import CORS
 import os
 import uuid
-from pipeline import generate_paint_by_numbers
-from flask_cors import CORS
+import main  # originele pipeline wrapper
 
 app = Flask(__name__)
 CORS(app)
@@ -16,20 +16,21 @@ os.makedirs(RESULT_FOLDER, exist_ok=True)
 def upload_file():
     file = request.files['image']
     num_colors = int(request.form.get('colors', 24))
+    size = int(request.form.get('size', 500))
 
     if file:
-        filename = f"{uuid.uuid4().hex}.jpg"
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
+        filename = f"{uuid.uuid4().hex}"
+        input_path = os.path.join(UPLOAD_FOLDER, f"{filename}.jpg")
+        file.save(input_path)
 
-        output_png = os.path.join(RESULT_FOLDER, f"{filename}_out.png")
-        output_svg = os.path.join(RESULT_FOLDER, f"{filename}_out.svg")
+        output_png = os.path.join(RESULT_FOLDER, f"{filename}.png")
+        output_svg = os.path.join(RESULT_FOLDER, f"{filename}.svg")
 
-        generate_paint_by_numbers(filepath, output_png, output_svg, num_colors)
+        main.run_pipeline(input_path, output_png, output_svg, num_colors, size)
 
         return send_file(output_png, mimetype='image/png')
 
-    return jsonify({'error': 'No file uploaded'}), 400
+    return {'error': 'No file uploaded'}, 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
