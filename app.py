@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 import os
 import uuid
-from paint_by_numbers import generate_paint_by_numbers
+from pipeline import generate_paint_by_numbers
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -22,11 +22,12 @@ def upload_file():
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
 
-        output_path = os.path.join(RESULT_FOLDER, f"{filename}_out.png")
+        output_png = os.path.join(RESULT_FOLDER, f"{filename}_out.png")
+        output_svg = os.path.join(RESULT_FOLDER, f"{filename}_out.svg")
 
-        generate_paint_by_numbers(filepath, output_path, num_colors)
+        generate_paint_by_numbers(filepath, output_png, output_svg, num_colors)
 
-        return send_file(output_path, mimetype='image/png')
+        return send_file(output_png, mimetype='image/png')
 
     return jsonify({'error': 'No file uploaded'}), 400
 
