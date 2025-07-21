@@ -1,1 +1,0 @@
-# originele segment.py inhoud
